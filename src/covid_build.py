@@ -1,5 +1,3 @@
-import time
-
 from datetime import datetime
 from pandas.io import json
 
@@ -28,7 +26,6 @@ raw_data_table_creation = """CREATE TABLE raw_data (
 );
 """
 
-
 countries_table_creation = """CREATE TABLE countries (
     `id` int NOT NULL AUTO_INCREMENT,
     `country` VARCHAR(255) NOT NULL,
@@ -37,7 +34,6 @@ countries_table_creation = """CREATE TABLE countries (
     PRIMARY KEY(`id`)
 );
 """
-
 
 def get_country_data(country):
     print(f'LOG: getting country {country} data')
@@ -64,9 +60,9 @@ def get_country_data(country):
 
     df = json_normalize(json_data)
 
-    if(df.empty or response.status_code != 200): #!Todo some status_code deserves other treatments
+    if(df.empty or response.status_code != 200):
         print(f'LOG: error in request country {country} data')
-        return pd.DataFrame()
+        return df
 
     rename = {
         'Country' : 'country',
@@ -194,16 +190,20 @@ def main():
 
     df_to_sql(df_countries, engine, countries_table)
 
+    empty_countries = []
+
     for country in countries:
         df = get_country_data(country)
         if(df.empty == False):
             df_to_sql(df, engine, raw_data_table, country, if_exists='append')
         else:
             print(f'LOG: country {country} has no data')
+            empty_countries.append(country)
         del df
-        time.sleep(1)
 
     engine.dispose() # close sqlalchemy engine
+
+    # *TODO try to divide requests for empty_countries
 
 if __name__ == "__main__":
     main()

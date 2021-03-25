@@ -1,0 +1,13 @@
+# Docker dependencies
+Flask==1.1.2
+gunicorn==19.9.0
+Flask-API==2.0
+
+requests==2.24.0
+pandas==1.1.1
+numpy==1.19.1
+SQLAlchemy==1.4.2
+DateTime==4.3
+mysql==0.0.2
+mysql-connector-python==8.0.23
+mysqlclient==2.0.3
